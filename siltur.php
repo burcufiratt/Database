@@ -5,7 +5,7 @@ if(isset($_GET["id"]))
 	$sorgu= $baglan->prepare("DELETE FROM kurumtürleri WHERE ID=?");
 	$sonuc=$sorgu->execute([$_GET['id']]);
 	 if($sonuc){
-		header("Location:kurumtur.php"); //Silme tamamlandıktan sonra personelliste sayfasına yönlendiriyoruz.
+		header("Location:kurumtur.php");
 	 }
 	 else
 		echo("Kayıt silinemedi.");

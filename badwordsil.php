@@ -5,7 +5,7 @@ if(isset($_GET["id"]))
 	$sorgu= $baglan->prepare("DELETE FROM badwords WHERE ID=?");
 	$sonuc=$sorgu->execute([$_GET['id']]);
 	 if($sonuc){
-		header("Location:badwords.php"); //Silme tamamlandıktan sonra personelliste sayfasına yönlendiriyoruz.
+		header("Location:badwords.php");
 	 }
 	 else
 		echo("Kayıt silinemedi.");

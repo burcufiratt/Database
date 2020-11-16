@@ -5,7 +5,7 @@ if(isset($_GET["id"]))
 	$sorgu= $baglan->prepare("DELETE FROM domainextension WHERE ID=?");
 	$sonuc=$sorgu->execute([$_GET['id']]);
 	 if($sonuc){
-		header("Location:domainextension.php"); //Silme tamamlandıktan sonra personelliste sayfasına yönlendiriyoruz.
+		header("Location:domainextension.php");
 	 }
 	 else
 		echo("Kayıt silinemedi.");
