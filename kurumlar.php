@@ -1,7 +1,7 @@
 <?php 
 include('inc/navbar.php');
 
-include("db.php");
+include("inc/db.php");
 include("inc/header.php")?>
 
 <form method="post" action="#">

@@ -3,7 +3,7 @@ include('inc/navbar.php');
 if($_GET["islem"]=="sil"){
 if(isset($_GET["id"]))
 {
-include("db.php");
+include("inc/db.php");
 	$sorgu= $baglan->prepare("DELETE FROM blacklist WHERE ID=?");
 	$sonuc=$sorgu->execute([$_GET['id']]);
 	 if($sonuc){
@@ -16,7 +16,7 @@ include("db.php");
 if($_GET["islem"]=="guncelle"){
 date_default_timezone_set('Europe/Istanbul');
 
-	include("db.php");
+	include("inc/db.php");
 	$id = $_GET['id'];
 	// echo isset($id);
 	// die;
@@ -37,7 +37,7 @@ date_default_timezone_set('Europe/Istanbul');
 }
 if($_GET["islem"]=="ekle"){
 
-	include("db.php");
+	include("inc/db.php");
 
 	// echo isset($id);
 	// die;
@@ -92,7 +92,7 @@ if($_GET["islem"]=="ekle"){
 ?>
 <?php include('inc/header.php') ?>
 
-<?php 	include('db.php');
+<?php 	include('inc/db.php');
 		if (isset($_POST["id"])) {
 		$Form_id = $_POST["id"];
 		$ID = $_POST["ID"];
