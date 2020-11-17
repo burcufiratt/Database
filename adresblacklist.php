@@ -1,8 +1,7 @@
 <?php 
 include('inc/navbar.php');
 include("db.php");
-include('inc/header.php');
-?>
+include("inc/header.php")?>
 
 <form method="post" action="#">
 <div class="container">
@@ -12,12 +11,13 @@ include('inc/header.php');
 		 <table class="table table-bordered table-striped table-dark">
 			<tr>
 			 <td>ID</td>
-			 <td>Yer Saglayıcı Adı</td>
+			 <td>HOST NAME</td>
+			  <td>MAİL ADRESİ</td>
 			 <td class="text-right">YÖNET</td>
 			
 			 </tr>
 			 <?php
-			$query = $baglan->prepare("SELECT * FROM yersaglayicilari");
+			$query = $baglan->prepare("SELECT * FROM adresblacklist");
 
 			 $query->execute();
 			 $result=$query-> fetchAll(PDO::FETCH_OBJ);
@@ -25,12 +25,13 @@ include('inc/header.php');
 			  
 			 	<tr>
 			 	<td><?= $row->ID ?></td>
-			 	<td><?= $row->YerSaglayiciAdi ?></td>
+			 	<td><?= $row->HostName ?></td>
+				<td><?= $row->MailAdresi ?></td>
 	
 		
 			 	<td class="text-right">
-					<a href="yersaglayiciduzenle.php?islem=guncelle&id=<?= $row->ID ?> " class="btn btn-warning">Güncelle</a>
-					<a href="yersaglayiciduzenle.php?islem=sil&id=<?= $row->ID ?> " class="btn btn-danger">Sil</a>
+					<a href="adresblacklistduzenle.php?islem=guncelle&id=<?= $row->ID ?> " class="btn btn-warning">Güncelle</a>
+					<a href="adresblacklistduzenle.php?islem=sil&id=<?= $row->ID ?> " class="btn btn-danger">Sil</a>
 				</td>
 			    </tr>
 				 
@@ -40,12 +41,11 @@ include('inc/header.php');
 					
 				
 			</table> 
-			<a href="yersaglayiciduzenle.php?islem=ekle" class="btn btn-success">EKLE</a>
+			<a href="adresblacklistduzenle.php?islem=ekle" class="btn btn-success">EKLE</a>
 		  </div>  
 	  </div>
 	</div>
 
  
-<?include('inc/footer.php')?>
-
+<?include("inc/footer.php")?>
  </form>
