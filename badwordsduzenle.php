@@ -1,9 +1,14 @@
 <?php 
-include('inc/navbar.php');
+include("inc/db.php");
+
 if($_GET["islem"]=="sil"){
-if(isset($_GET["id"]))
-{
-	include("inc/db.php");
+	if(isset($_GET["id"])){
+		$requestUrl = $_SERVER['REQUEST_URI'];
+		$kullanici=$_SESSION['name'];
+		$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
+		$sorgu->execute(array($kullanici, $requestUrl));
+	
+	
 	$sorgu= $baglan->prepare("DELETE FROM badwords WHERE ID=?");
 	$sonuc=$sorgu->execute([$_GET['id']]);
 	 if($sonuc){
@@ -16,11 +21,7 @@ if(isset($_GET["id"]))
 if($_GET["islem"]=="guncelle"){
 date_default_timezone_set('Europe/Istanbul');
 
-	include("inc/db.php");
 	$id = $_GET['id'];
-	// echo isset($id);
-	// die;
-
 	 
 	if(isset($id)){
 	 
@@ -37,37 +38,23 @@ date_default_timezone_set('Europe/Istanbul');
 	 
 }
 if($_GET["islem"]=="ekle"){
-
-	include("inc/db.php");
-
-	// echo isset($id);
-	// die;
-	
-
-	 
 	if (isset($_POST["kaydet"])) {
-		
-		$ID = $_POST["ID"];
-		$Kelime = $_POST["Kelime"];
-		$Ekleyen = $_POST["Ekleyen"];
+			
+		$requestUrl = $_SERVER['REQUEST_URI'];
+		$kullanici=$_SESSION['name'];
+		$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
+		$sorgu->execute(array($kullanici, $requestUrl));
 
-		
-		
-		
-		if(!empty($ID)&& !empty($Kelime)){
+	$Kelime = $_POST["Kelime"];
+		if(!empty($Kelime) ){
 		
 
 			$ekle = $baglan->prepare("
-			insert into badwords set 
-	        Kelime= :Kelime,
-         	ID= :ID,
-			Ekleyen= :Ekleyen");
+			insert into badwords (Kelime,Ekleyen) VALUES (?,?)");
 		
 		    try {
-		        $result = $ekle->execute(array(
-				 "ID" => $ID,
-				 "Kelime" => $Kelime,
-				 "Ekleyen" => $Ekleyen));
+		        $result = $ekle->execute(array($Kelime,$kullanici));
+				
 			
 	 
 				  if($result){ echo "Eklendi." ;
@@ -81,39 +68,33 @@ if($_GET["islem"]=="ekle"){
 	}}
 }
 
-
-
 ?>
-<?php include('inc/header.php') ?>
+<?php 
+include('inc/header.php');
+include('inc/navbar.php');?>
 
-<?php 	include('inc/db.php');
+<?php
 		if (isset($_POST["id"])) {
 		$Form_id = $_POST["id"];
 		$ID = $_POST["ID"];
 		$Kelime = $_POST["Kelime"];
-		$Duzenleyen = $_POST["Duzenleyen"];
+	
 
+		$requestUrl = $_SERVER['REQUEST_URI'];
+		$kullanici=$_SESSION['name'];
+		$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
+		$sorgu->execute(array($kullanici, $requestUrl));
 		
+		if(!empty($ID) ){
 		
-		if(!empty($ID)&& !empty($Kelime) ){
-		
-
 			$duzenle = $baglan->prepare("
-			update badwords set 
-			Kelime =:Kelime,
-			ID =:ID,	
-			Duzenleyen =:Duzenleyen Where ID = :ID");
+			update badwords set  Kelime=?,Duzenleyen =? where ID =?");
 		
 		 try {
-			$result = $duzenle->execute(array(
-				':Kelime' => ($Kelime),
-				':ID' => ($ID),
-				':Duzenleyen' => ($Duzenleyen)
+			$result = $duzenle->execute(array( $Kelime,$kullanici,$ID ));
 	
-			));
-	 
-		 if($result){ echo "Güncellendi." ;
-			header('Location:badwords.php ');  }
+				if($result){ echo "Güncellendi." ;
+					header('Location:badwords.php ');  }
 				else{ '<script>alert("Welcome to Geeks for Geeks")</script>'; }
 		   }
 		
@@ -121,37 +102,22 @@ if($_GET["islem"]=="ekle"){
 			echo $e->getMessage();
 		}
 	}}?>
-	<?php if($_GET["islem"]=="guncelle"){ ?>
- <div class="container">
-	  <div class="row justify-content-center">
+<?php if($_GET["islem"]=="guncelle"){ ?>
+ <br><div class="container">
+ <div class="row justify-content-center">
 <form method="post" action="?id=<?php echo $id;?>">
 <?php foreach($result as $row){ ?>
 <div class="form-group">
-	<label for="ID">ID</label>
 		<input type="hidden" name="id" value="<?php echo $id;?>">
-	<input type="text" class="form-control" id="ID" name="ID" value="<?= $row->ID ?>">
+		<input type="hidden" class="form-control" id="ID" name="ID" value="<?= $row->ID ?>">
 </div>
 <div class="form-group">
-	<label for="ID">Kelime</label>
+	<label for="ID"><b>Kelime</label>
 	<input type="text" class="form-control" id="Kelime" name="Kelime"  value="<?= $row->Kelime ?>">
 </div>
 
-<div class="form-group">
-	<select class="custom-select" id="Duzenleyen" placeholder="Duzenleyen " name="Duzenleyen">
-	<?php 
-		
-		$Duzenleyen = $baglan->prepare("SELECT ID, Ad FROM kullanicilar");
-		$Duzenleyen->execute(array());
-		foreach($Duzenleyen as $item) {
-			
-				echo "<option value='" . $item['ID'] . "' selected>" . $item['Ad'] . "</option>";
-			
-		}
-	?>
-	 </select>
-</div>
-<div class="form-group">	
-<button type="submit" class="btn btn-success" class="form-control">Kaydet</button>
+<div class="form-group text-center">	
+<button type="submit" class="btn btn-dark" class="form-control">Kaydet</button>
 </div>
 <?php } ?>
 </form>
@@ -161,33 +127,20 @@ if($_GET["islem"]=="ekle"){
 <?	} ?>
 
 <?php if($_GET["islem"]=="ekle"){ ?>
-	    <div class="container">
+	    <br><div class="container">
 	  <div class="row justify-content-center">
 <form method="post" action="#">
 
       <div class="form-group">
-	     <label for="ID">ID</label>
-	     <input type="text" class="form-control" id="ID" name="ID" >
+	     <input type="hidden" class="form-control" id="ID" name="ID" >
       </div>
       <div class="form-group">
-	     <label for="Kelime">Kelime</label>
+	     <label for="Kelime"><b>Kelime</label>
 	     <input type="text" class="form-control" id="Kelime" name="Kelime" >
       </div>
-     
-		<select class="custom-select" id="Ekleyen" placeholder="Ekleyen " name="Ekleyen">
-	<?php 
-		
-		$Ekleyen = $baglan->prepare("SELECT ID, Ad FROM kullanicilar");
-		$Ekleyen->execute(array());
-		foreach($Ekleyen as $item) {
-			
-				echo "<option value='" . $item['ID'] . "' selected>" . $item['Ad'] . "</option>";
-			
-		}
-	?>
-	 </select>
-       <div class="form-group">
-           <button type="submit" class="btn btn-success" name="kaydet" class="form-control">Kaydet</button>
+
+      <div class="form-group text-center">
+        <button type="submit" class="btn btn-dark" name="kaydet" class="form-control">Kaydet</button>
        </div>
 </form>
  

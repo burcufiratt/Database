@@ -1,19 +1,20 @@
 <?php 
-include('inc/navbar.php');
 include("inc/db.php");
-include('inc/header.php')
+include('inc/header.php');
+include('inc/navbar.php');
 ?>
 
 <form method="post" action="#">
-<div class="container">
+<br><div class="container">
 
 	  <div class="row justify-content-center">
 		<div class="col">
-		 <table class="table table-bordered table-striped table-dark">
+		 <table class="table table-bordered table-striped table-light">
+			<tr colspan = 5 ><b>KURUM TÜRLERİ</tr>
 			<tr>
-			 <td>ID</td>
+			 <td><b>ID</td>
 			 <td>KURUM TÜRÜ</td>
-			 <td class="text-right">YÖNET</td>
+			 <td class="text-right"><b>YÖNET</td>
 			
 			 </tr>
 			 <?php
@@ -40,8 +41,9 @@ include('inc/header.php')
 					
 				
 			</table> 
-			<a href="kurumturuduzenle.php?islem=ekle" class="btn btn-success">EKLE</a>
-		  </div>  
+			<div class ="text-right">
+			<a href="kurumturuduzenle.php?islem=ekle" class="btn btn-success">Kurum Türü Ekle</a>
+		  </div> </div> 
 	  </div>
 	</div>
 

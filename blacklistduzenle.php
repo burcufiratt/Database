@@ -1,9 +1,13 @@
 <?php 
-include('inc/navbar.php');
+include("inc/db.php");
+
 if($_GET["islem"]=="sil"){
 if(isset($_GET["id"]))
 {
-include("inc/db.php");
+	$requestUrl = $_SERVER['REQUEST_URI'];
+	$kullanici=$_SESSION['name'];
+	$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
+	$sorgu->execute(array($kullanici, $requestUrl));
 	$sorgu= $baglan->prepare("DELETE FROM blacklist WHERE ID=?");
 	$sonuc=$sorgu->execute([$_GET['id']]);
 	 if($sonuc){
@@ -15,65 +19,41 @@ include("inc/db.php");
 
 if($_GET["islem"]=="guncelle"){
 date_default_timezone_set('Europe/Istanbul');
-
-	include("inc/db.php");
 	$id = $_GET['id'];
-	// echo isset($id);
-	// die;
-
-	 
 	if(isset($id)){
 	 
 	  $query = $baglan->prepare("SELECT * FROM blacklist WHERE ID = $id");
+      $query->execute();
+      $result=$query-> fetchAll(PDO::FETCH_OBJ);
 
-     $query->execute();
-     $result=$query-> fetchAll(PDO::FETCH_OBJ);
-
-
-    } else {
+    } 
+	else {
 		 header("Refresh: 3; url=index.php"); 
 	}
 	 
 }
 if($_GET["islem"]=="ekle"){
-
-	include("inc/db.php");
-
-	// echo isset($id);
-	// die;
-	
-
-	 
 	if (isset($_POST["kaydet"])) {
 		
-		$ID = $_POST["ID"];
-		$HostName = $_POST["HostName"];
-		$IPTuru = $_POST["IPTuru"];
-		$IPAdresi = $_POST["IPAdresi"];
-		$KurumID = $_POST["KurumID"];
-		$Ekleyen = $_POST["Ekleyen"];
-		
-		
-		if(!empty($HostName) && !empty($IPAdresi)){
+		$requestUrl = $_SERVER['REQUEST_URI'];
+		$kullanici=$_SESSION['name'];
+		$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
+		$sorgu->execute(array($kullanici, $requestUrl));
+
+			$HostName = $_POST["HostName"];
+			$IPTuru = $_POST["IPTuru"];
+			$IPAdresi = $_POST["IPAdresi"];
+			$KurumID = $_POST["KurumID"];
+
+		if(!empty($HostName)){
 		
 
 			$ekle = $baglan->prepare("
-			insert into blacklist set 
-	        ID= :ID,
-         	HostName= :HostName,
-			IPTuru= :IPTuru,
-			IPAdresi= :IPAdresi,
-        	KurumID= :KurumID,
-			Ekleyen= :Ekleyen");
+			insert into blacklist (HostName,IPTuru,IPAdresi,KurumID,Ekleyen) VALUES (?,?,?,?,?)");
 		
 		    try {
-		        $result = $ekle->execute(array(
-				 "ID" => $ID,
-				 "HostName" => $HostName,
-				 "IPTuru" => $IPTuru,
-				 "IPAdresi" => $IPAdresi,
-				 "KurumID" => $KurumID,
-				 "Ekleyen" => $Ekleyen));
+		        $result = $ekle->execute(array($HostName,$IPTuru,$IPAdresi,$KurumID,$kullanici));
+				
 			
 	 
 				  if($result){ echo "Eklendi." ;
@@ -88,45 +68,35 @@ if($_GET["islem"]=="ekle"){
 }
 
 
-
 ?>
-<?php include('inc/header.php') ?>
+<?php include('inc/header.php');
+include('inc/navbar.php');?>
 
-<?php 	include('inc/db.php');
+<?php 	
 		if (isset($_POST["id"])) {
-		$Form_id = $_POST["id"];
-		$ID = $_POST["ID"];
-		$HostName = $_POST["HostName"];
-		$IPTuru = $_POST["IPTuru"];
-		$IPAdresi = $_POST["IPAdresi"];
-		$KurumID = $_POST["KurumID"];
-		$Duzenleyen = $_POST["Duzenleyen"];
+			$Form_id = $_POST["id"];
+			$ID = $_POST["ID"];
+			$HostName = $_POST["HostName"];
+			$IPTuru = $_POST["IPTuru"];
+			$IPAdresi = $_POST["IPAdresi"];
+			$KurumID = $_POST["KurumID"];
 
+	$requestUrl = $_SERVER['REQUEST_URI'];
+	$kullanici=$_SESSION['name'];
+	$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
+	$sorgu->execute(array($kullanici, $requestUrl));
 		
 		
 		if(!empty($ID) ){
 		
 
 			$duzenle = $baglan->prepare("
-			update blacklist set 
-			ID =:ID,
-			HostName =:HostName,
-			IPTuru =:IPTuru,
-			IPAdresi =:IPAdresi,
-			KurumID =:KurumID,
-			Duzenleyen =:Duzenleyen
-			Where ID = :ID");
+			update blacklist set HostName =?,IPTuru =?,IPAdresi =?,KurumID =?,
+			Duzenleyen =?
+			Where ID = ?");
 		
 		 try {
-			$result = $duzenle->execute(array(
-				':ID' => ($ID),
-				':HostName' => ($HostName),
-				':IPTuru' => ($IPTuru),
-				':IPAdresi' => ($IPAdresi),
-				':KurumID' => ($KurumID),
-				':Duzenleyen' => ($Duzenleyen)
-	
-			));
+			$result = $duzenle->execute(array($HostName, $IPTuru,$IPAdresi,$KurumID,$kullanici,$ID ));
 	 
 				if($result){ echo "Güncellendi." ;
 			header('Location:blacklist.php ');  }
@@ -138,52 +108,40 @@ if($_GET["islem"]=="ekle"){
 		}
 	}}?>
 	<?php if($_GET["islem"]=="guncelle"){ ?>
- <div class="container">
+ <br><div class="container">
 	  <div class="row justify-content-center">
 <form method="post" action="?id=<?php echo $id;?>">
 <?php foreach($result as $row){ ?>
+
 <div class="form-group">
-	<label for="ID">ID</label>
-		<input type="hidden" name="id" value="<?php echo $id;?>">
-	<input type="text" class="form-control" id="ID" name="ID"  value="<?= $row->ID ?>">
+	<input type="hidden" name="id" value="<?php echo $id;?>">
+	<input type="hidden" class="form-control" id="ID" name="ID"  value="<?= $row->ID ?>">
 </div>
 <div class="form-group">
-	<label for="HostName">HostName</label>
+	<label for="HostName"><b>HostName</label>
 	<input type="text" class="form-control" id="HostName" name="HostName"  value="<?= $row->HostName ?>">
 </div>
 
 <div class="form-group">
-<label for="IP Turu">IP Turu</label>
-<select class="custom-select" id="IPTuru" placeholder="IPTuru " name="IPTuru">
-
-<option value="Blok">Blok</option>
-<option value="Tekil">Tekil</option>
-</select>
+	<label for="IP Turu"><b>IP Turu</label>
+	<select class="custom-select" id="IPTuru" placeholder="IPTuru " name="IPTuru">
+		<option value="Blok">Blok</option>
+		<option value="Tekil">Tekil</option>
+	</select>
 </div>	
 <div class="form-group">
-	<label for="IPAdresi">IPAdresi</label>
+	<label for="IPAdresi"><b>IP Adresi</label>
 	<input type="text" class="form-control" id="IPAdresi" name="IPAdresi"  value="<?= $row->IPAdresi ?>">
 </div>
 <div class="form-group">
-	<label for="KurumID">KurumID</label>
+	<label for="KurumID"><b>Kurum ID</label>
 	<input type="text" class="form-control" id="KurumID" name="KurumID"  value="<?= $row->KurumID ?>">
 </div>
 
-<div class="form-group">
-	<select class="custom-select" id="Duzenleyen" placeholder="Duzenleyen " name="Duzenleyen">
-	<?php 
-		
-		$Duzenleyen = $baglan->prepare("SELECT ID, Ad FROM kullanicilar");
-		$Duzenleyen->execute(array());
-		foreach($Duzenleyen as $item) {
-			
-				echo "<option value='" . $item['ID'] . "' selected>" . $item['Ad'] . "</option>";
-			
-		}
-	?>
-	 </select>
 </div>	
-<button type="submit" class="btn btn-success" class="form-control">Kaydet</button>
+<div class="form-group text-center">
+	<button type="submit" class="btn btn-dark" class="form-control">Kaydet</button>
+</div>
 <?php } ?>
 </form>
  
@@ -192,20 +150,20 @@ if($_GET["islem"]=="ekle"){
 <?	} ?>
 
 <?php if($_GET["islem"]=="ekle"){ ?>
-	     <div class="container">
+	    <br> <div class="container">
 	  <div class="row justify-content-center">
 <form method="post" action="#">
 
       <div class="form-group">
-	     <label for="ID">ID</label>
-	     <input type="text" class="form-control" id="ID" name="ID" value="">
+	    
+	     <input type="hidden" class="form-control" id="ID" name="ID" value="">
       </div>
       <div class="form-group">
 	     <label for="HostName">HostName</label>
 	     <input type="text" class="form-control" id="HostName" name="HostName"  value="">
       </div>
 <div class="form-group">
-<label for="IP Turu">IP Turu</label>
+<label for="IP Turu"><b>IP Turu</label>
 <select class="custom-select" id="IPTuru" placeholder="IPTuru " name="IPTuru">
 
 <option value="Blok">Blok</option>
@@ -214,30 +172,18 @@ if($_GET["islem"]=="ekle"){
 </div>	
 
  <div class="form-group">
-	     <label for="IPAdresi">IPAdresi</label>
+	     <label for="IPAdresi"><b>IP Adresi</label>
 	     <input type="text" class="form-control" id="IPAdresi" name="IPAdresi" >
       </div>
 	  
 	  
   <div class="form-group">
-	     <label for="KurumID">KurumID</label>
+	     <label for="KurumID"><b>Kurum ID</label>
 	     <input type="text" class="form-control" id="KurumID" name="KurumID" value="">
       </div> 	  
 
-	<select class="custom-select" id="Ekleyen" placeholder="Ekleyen " name="Ekleyen">
-	<?php 
-		
-		$Ekleyen = $baglan->prepare("SELECT ID, Ad FROM kullanicilar");
-		$Ekleyen->execute(array());
-		foreach($Ekleyen as $item) {
-			
-				echo "<option value='" . $item['ID'] . "' selected>" . $item['Ad'] . "</option>";
-			
-		}
-	?>
-	 </select>
-       <div class="form-group">
-           <button type="submit" class="btn btn-success" name="kaydet" class="form-control">Kaydet</button>
+      <div class="form-group text-center">
+        <button type="submit" class="btn btn-dark" name="kaydet" class="form-control">Kaydet</button>
        </div>
 </form>
  

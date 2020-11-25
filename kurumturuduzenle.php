@@ -1,9 +1,15 @@
 <?php 
-include('inc/navbar.php');
+include("inc/db.php");
+
 if($_GET["islem"]=="sil"){
 if(isset($_GET["id"]))
 {
-include("inc/db.php");
+	
+	$requestUrl = $_SERVER['REQUEST_URI'];
+	$kullanici=$_SESSION['name'];
+	$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
+	$sorgu->execute(array($kullanici, $requestUrl));
+	
 	$sorgu= $baglan->prepare("DELETE FROM kurumtürleri WHERE ID=?");
 	$sonuc=$sorgu->execute([$_GET['id']]);
 	 if($sonuc){
@@ -16,12 +22,7 @@ include("inc/db.php");
 if($_GET["islem"]=="guncelle"){
 date_default_timezone_set('Europe/Istanbul');
 
-	include("inc/db.php");
 	$id = $_GET['id'];
-	// echo isset($id);
-	// die;
-
-	 
 	if(isset($id)){
 	 
 	 $query = $baglan->prepare("SELECT * FROM kurumtürleri WHERE ID = $id");
@@ -37,36 +38,28 @@ date_default_timezone_set('Europe/Istanbul');
 }
 if($_GET["islem"]=="ekle"){
 
-	include("inc/db.php");
 
-	// echo isset($id);
-	// die;
-	
-
-	 
 	if (isset($_POST["kaydet"])) {
 		
+	$requestUrl = $_SERVER['REQUEST_URI'];
+	$kullanici=$_SESSION['name'];
+	$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
+	$sorgu->execute(array($kullanici, $requestUrl));
+		
 	$Adi = $_POST["Adi"];
-		$ID = $_POST["ID"];
-		$Ekleyen = $_POST["Ekleyen"];
 
-		
-		
-		
-		if(!empty($Adi)&& !empty($ID)){
+
+
+		if(!empty($Adi)){
 		
 
 			$ekle = $baglan->prepare("
-			insert into kurumtürleri set 
-	        Adi= :Adi,
-         	ID= :ID,
-			Ekleyen= :Ekleyen");
+			insert into kurumtürleri (Adi, Ekleyen) VALUES (?,?)");
+	  
 		
 		    try {
-		        $result = $ekle->execute(array(
-				 "Adi" => $Adi,
-				 "ID" => $ID,
-                 "Ekleyen" => $Ekleyen ));
+		        $result = $ekle->execute(array($Adi,$kullanici));
+				
 			
 	 
 				  if($result){ echo "Kurum Türü Eklendi." ;
@@ -80,37 +73,36 @@ if($_GET["islem"]=="ekle"){
 	}}
 }
 
-
-
 ?>
-<?php include('inc/header.php') ?>
-
-<?php 	include('inc/db.php');
-	if (isset($_POST["id"])) {
+<?php include('inc/header.php');
+include('inc/navbar.php');?>
+<?php 
+if (isset($_POST["id"])) {
 		$Form_id = $_POST["id"];
-		$Adi = $_POST["Adi"];
 		$ID = $_POST["ID"];
-		$Duzenleyen = $_POST["Duzenleyen"];
+		$Adi = $_POST["Adi"];
+		
+		
+	
 
+		$requestUrl = $_SERVER['REQUEST_URI'];
+	$kullanici=$_SESSION['name'];
+	$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
+	$sorgu->execute(array($kullanici, $requestUrl));
 		
-		
-		if(!empty($Adi)&& !empty($ID) ){
+		if(!empty($ID) ){
 		
 
 			$duzenle = $baglan->prepare("
-			update kurumtürleri set 
-			Adi =:Adi,
-			ID =:ID,
-			Duzenleyen =:Duzenleyen Where ID = :ID");
+			update kurumtürleri set  Adi=?, Duzenleyen =? where ID =?");
+
 		
 		 try {
-			$result = $duzenle->execute(array(
-				':Adi' => ($Adi),
-				':ID' => ($ID),
-				':Duzenleyen' => ($Duzenleyen)
-			));
+			$result = $duzenle->execute(array( $Adi,$kullanici,$ID ));
+	
+			
 	 
-				if($result){ echo "Kurum Türü Güncellendi." ;
+				if($result){ echo "Güncellendi." ;
 			header('Location:kurumturu.php ');  }
 				else{ '<script>alert("Welcome to Geeks for Geeks")</script>'; }
 		   }
@@ -120,70 +112,49 @@ if($_GET["islem"]=="ekle"){
 		}
 	}}?>
 	<?php if($_GET["islem"]=="guncelle"){ ?>
- <div class="container">
+   <br><div class="container">
 	  <div class="row justify-content-center">
 <form method="post" action="?id=<?php echo $id;?>">
 <?php foreach($result as $row){ ?>
 <div class="form-group">
-	<label for="Adi">Kurum Türü</label>
+	
 		<input type="hidden" name="id" value="<?php echo $id;?>">
-	<input type="text" class="form-control" id="Adi" name="Adi" placeholder="örn. Devlet Kurumları" value="<?= $row->Adi ?>">
+
+	<input type="hidden" class="form-control" id="ID" name="ID"  value="<?= $row->ID ?>">
 </div>
 <div class="form-group">
-	<label for="ID">Tür ID</label>
-	<input type="text" class="form-control" id="ID" name="ID" placeholder="örn. 1" value="<?= $row->ID ?>">
+	<label for="KurumAdi"><b>Kurum Türü</label>
+	<input type="text" class="form-control" id="Adi" name="Adi"  value="<?= $row->Adi ?>">
 </div>
 
-	<select class="custom-select" id="Duzenleyen" placeholder="Duzenleyen " name="Duzenleyen">
-	<?php 
-		
-		$Duzenleyen = $baglan->prepare("SELECT ID, Ad FROM kullanicilar");
-		$Duzenleyen->execute(array());
-		foreach($Duzenleyen as $item) {
-			
-				echo "<option value='" . $item['ID'] . "' selected>" . $item['Ad'] . "</option>";
-			
-		}
-	?>
-	 </select>
-<div class="form-group">
-<button type="submit" class="btn btn-success" class="form-control">Kaydet</button>
+
+
+<div class="form-group text-center">
+<button type="submit" class="btn btn-dark" class="form-control">Kaydet</button>
 </div>
 <?php } ?>
+
 </form>
  
 	</div>
 </div>
 <?	} ?>
-
 <?php if($_GET["islem"]=="ekle"){ ?>
-	     <div class="container">
+	    <br> <div class="container">
 	  <div class="row justify-content-center">
 <form method="post" action="#">
 
       <div class="form-group">
-	     <label for="KurumAdi">Kurum Türü</label>
+	     <label for="KurumAdi"><b>Kurum Türü</label>
 	     <input type="text" class="form-control" id="Adi" name="Adi" placeholder="örn. Devlet Kurumları" value="">
       </div>
       <div class="form-group">
-	     <label for="KID">Tür ID</label>
-	     <input type="text" class="form-control" id="ID" name="ID" placeholder="örn. 1" value="">
+	   
+	     <input type="hidden" class="form-control" id="ID" name="ID" placeholder="örn. 1" value="">
       </div>
-     
-		<select class="custom-select" id="Ekleyen" placeholder="Ekleyen " name="Ekleyen">
-	<?php 
-		
-		$Ekleyen = $baglan->prepare("SELECT ID, Ad FROM kullanicilar");
-		$Ekleyen->execute(array());
-		foreach($Ekleyen as $item) {
-			
-				echo "<option value='" . $item['ID'] . "' selected>" . $item['Ad'] . "</option>";
-			
-		}
-	?>
-	 </select>
-       <div class="form-group">
-           <button type="submit" class="btn btn-success" name="kaydet" class="form-control">Kaydet</button>
+
+        <div class="form-group text-center">	
+           <button type="submit" class="btn btn-dark" name="kaydet" class="form-control">Kaydet</button>
        </div>
 </form>
  

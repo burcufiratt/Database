@@ -1,9 +1,15 @@
 <?php 
-include('inc/navbar.php');
+	include("inc/db.php");
+
+	error_reporting(0);
 if($_GET["islem"]=="sil"){
 if(isset($_GET["id"]))
 {
-		include("inc/db.php");
+	$requestUrl = $_SERVER['REQUEST_URI'];
+	$kullanici=$_SESSION['name'];
+	$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
+	$sorgu->execute(array($kullanici, $requestUrl));
+	
 	$sorgu= $baglan->prepare("DELETE FROM kullanicilar WHERE ID=?");
 	$sonuc=$sorgu->execute([$_GET['id']]);
 	 if($sonuc){
@@ -14,12 +20,7 @@ if(isset($_GET["id"]))
 
 if($_GET["islem"]=="guncelle"){
 date_default_timezone_set('Europe/Istanbul');
-
-	include("inc/db.php");
 	$id = $_GET['id'];
-	// echo isset($id);
-	// die;
-
 	 
 	if(isset($id)){
 	 
@@ -35,36 +36,32 @@ date_default_timezone_set('Europe/Istanbul');
 	 
 }
 if($_GET["islem"]=="ekle"){
-
-	include("inc/db.php");
-
-	// echo isset($id);
-	// die;
 	
 
-	if (isset($_POST["kaydet"])) {
 		
-		$ID = $_POST["ID"];
-		$Ad = $_POST["Ad"];
-		$Soyad = $_POST["Soyad"];
+		$AdSoyad = $_POST["AdSoyad"];
+		$Sifre = md5($_POST["Sifre"]);
+	
+		$MailAdresi = $_POST["MailAdresi"];
 
+		if(!empty($AdSoyad)) {
+			$requestUrl = $_SERVER['REQUEST_URI'];
+	$kullanici=$_SESSION['name'];
+	$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
+	$sorgu->execute(array($kullanici, $requestUrl));
 		
-		
-		
-		if(!empty($ID)){
-		
-
 			$ekle = $baglan->prepare("
 			insert into kullanicilar set 
-	        Ad= :Ad,
-         	ID= :ID,
-			Soyad= :Soyad");
+	        AdSoyad= :AdSoyad,
+			MailAdresi= :MailAdresi,
+			Sifre= :Sifre");
 		
 		    try {
 		        $result = $ekle->execute(array(
-				 "ID" => $ID,
-				 "Ad" => $Ad,
-				 "Soyad" => $Soyad));
+				 "AdSoyad" => $AdSoyad,
+				 "MailAdresi" => $MailAdresi,
+				 
+				 "Sifre" => $Sifre));
 			
 	 
 				  if($result){ echo "Eklendi." ;
@@ -75,40 +72,50 @@ if($_GET["islem"]=="ekle"){
 		    catch(PDOException $e ) {
 			echo $e->getMessage();
 		                            }
-	}}
+	}
 }
 
 
 
 ?>
-<?php include('inc/header.php') ?>
+<?php include('inc/header.php'); 
+include('inc/navbar.php');?>
 
-<?php 	include('inc/db.php');
+<?php
+
 		if (isset($_POST["id"])) {
 		$Form_id = $_POST["id"];
 		$ID = $_POST["ID"];
-		$Ad = $_POST["Ad"];
-		$Soyad = $_POST["Soyad"];
+		$AdSoyad = $_POST["AdSoyad"];
+		$MailAdresi = $_POST["MailAdresi"];
+		$Sifre = md5($_POST["Sifre"]);
+		$Sifredel = md5($_POST["Sifredel"]);
 
-		
+
+	$requestUrl = $_SERVER['REQUEST_URI'];
+	$kullanici=$_SESSION['name'];
+	$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
+	$sorgu->execute(array($kullanici, $requestUrl));
 		
 		if(!empty($ID) ){
 		
-
 			$duzenle = $baglan->prepare("
 			update kullanicilar set 
-			Ad =:Ad,
-			Soyad =:Soyad,
-			ID =:ID	Where ID = :ID");
+			AdSoyad =:AdSoyad,
+			MailAdresi =:MailAdresi,
+			ID =:ID,
+			Sifre =:Sifre	Where ID = :ID and Sifre =:Sifredel ");
 		
 		 try {
 			$result = $duzenle->execute(array(
-				':Ad' => ($Ad),
-				':Soyad' => ($Soyad),
-				':ID' => ($ID)
+				':AdSoyad' => ($AdSoyad),
+				':ID' => ($ID),
+				':MailAdresi' => ($MailAdresi),
+				':Sifre' => ($Sifre),
+				':Sifredel' => ($Sifredel)
 	
 			));
-	 
+	
 				if($result){ echo "Güncellendi." ;
 			header('Location:kullanici.php ');  }
 				else{ '<script>alert("Welcome to Geeks for Geeks")</script>'; }
@@ -117,29 +124,38 @@ if($_GET["islem"]=="ekle"){
 		catch(PDOException $e ) {
 			echo $e->getMessage();
 		}
-	}}?>
+		 }}?>
 	<?php if($_GET["islem"]=="guncelle"){ ?>
- <div class="container">
+ <br><div class="container">
 	  <div class="row justify-content-center">
 <form method="post" action="?id=<?php echo $id;?>">
 <?php foreach($result as $row){ ?>
 <div class="form-group">
-	<label for="ID">ID</label>
 		<input type="hidden" name="id" value="<?php echo $id;?>">
-	<input type="text" class="form-control" id="ID" name="ID" value="<?= $row->ID ?>">
+	<input type="hidden" class="form-control" id="ID" name="ID" value="<?= $row->ID ?>">
 </div>
 <div class="form-group">
-	<label for="Ad">Ad</label>
-	<input type="text" class="form-control" id="Ad" name="Ad"  value="<?= $row->Ad ?>">
+	<label for="Ad"><b>Kullanıcı Adı</label>
+	<input type="text" class="form-control" id="AdSoyad" name="AdSoyad"  value="<?= $row->AdSoyad ?>">
 </div>
 <div class="form-group">
-	<label for="Soyad">Soyad</label>
-	<input type="text" class="form-control" id="Soyad" name="Soyad"  value="<?= $row->Soyad ?>">
+	<label for="MailAdresi"><b>Mail Adresi</label>
+	<input type="text" class="form-control" id="MailAdresi" name="MailAdresi"  value="<?= $row->MailAdresi ?>">
+</div>
+
+<div class="form-group">
+	<label for="Soyad"><b>Eski Sifre</label>
+	<input type="text" class="form-control" id="Sifredel" name="Sifredel"  value="">
+</div>
+<div class="form-group">
+	<label for="Soyad"><b>Sifre</label>
+	<input type="text" class="form-control" id="Sifre" name="Sifre"  value="">
 </div>
 
 
-	
-<button type="submit" class="btn btn-success" class="form-control">Kaydet</button>
+	<div class="form-group text-center">
+<button type="submit" class="btn btn-dark" class="form-control">Kaydet</button>
+</div>
 <?php } ?>
 </form>
  
@@ -148,26 +164,31 @@ if($_GET["islem"]=="ekle"){
 <?	} ?>
 
 <?php if($_GET["islem"]=="ekle"){ ?>
-	     <div class="container">
+	     <br><div class="container">
 	  <div class="row justify-content-center">
 <form method="post" action="#">
 
       <div class="form-group">
-	     <label for="ID">ID</label>
-	     <input type="text" class="form-control" id="ID" name="ID" >
+	     <input type="hidden" class="form-control" id="ID" name="ID" >
       </div>
       <div class="form-group">
-	     <label for="Ad">Ad</label>
-	     <input type="text" class="form-control" id="Ad" name="Ad" >
+	     <label for="Ad"><b>Kullanıcı Adı</label>
+	     <input type="text" class="form-control" id="AdSoyad" name="AdSoyad" >
       </div>
-	   <div class="form-group">
-	     <label for="Soyad">Soyad</label>
-	     <input type="text" class="form-control" id="Soyad" name="Soyad" >
+	    <div class="form-group">
+	     <label for="MailAdresi"><b>Mail Adresi</label>
+	     <input type="text" class="form-control" id="MailAdresi" name="MailAdresi" >
       </div>
+	       <div class="form-group">
+	     <label for="Ad"><b>Şifre</label>
+	     <input type="text" class="form-control" id="Sifre" name="Sifre" >
+      </div>
+	
+
      
 	
-       <div class="form-group">
-           <button type="submit" class="btn btn-success" name="kaydet" class="form-control">Kaydet</button>
+      <div class="form-group text-center">
+           <button type="submit" class="btn btn-dark" name="kaydet" class="form-control">Kaydet</button>
        </div>
 </form>
  
