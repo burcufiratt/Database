@@ -42,8 +42,8 @@ $token = $_SESSION['token'];
 				<?php
 			  }else{
 				  $kod=rand(1,9000)."_".rand(1,9000);
-				  $sorgu=$baglan->prepare("update kullanicilar set kod=? where MailAdresi=?");
-				  $calis=$sorgu->execute(array($kod,$eposta));
+				  $sorgu=$baglan->prepare("update kullanicilar set Sifre=? where MailAdresi=?");
+				  $calis=$sorgu->execute(array(md5($kod),$eposta));
 				  if($calis){
 			   require_once 'PHPMailer/PHPMailer.php';
 			   require_once 'PHPMailer/class.PHPMailer.php';

@@ -1,6 +1,12 @@
 
 <?php
 include("inc/db.php");
+session_start();
+
+    $_SESSION['token'] = bin2hex(random_bytes(32));
+
+$token = $_SESSION['token'];
+
 
 
 
@@ -15,46 +21,12 @@ include("inc/db.php");
     <div id="formFooter">
       <img src="assets/img/adsiz1.png" id="icon" alt="User Icon" />
     </div>
-    <form action="#" method="POST">
-	<input type="text" id="mail" class="fadeIn second" name="mail" placeholder="Mail Adresi">
-      <input type="text" id="kod" class="fadeIn second" name="kod" placeholder="Tek Kullanımlık Şifre">
+    <form action="index2.php" method="POST">
+		<input type="hidden" name="token" id="token" value="<?php echo $_SESSION['token']; ?>" />
+	<input type="text" id="name" class="fadeIn second" name="name" placeholder="Kullanıcı Adı">
+      <input type="text" id="pass" class="fadeIn second" name="pass" placeholder="Tek Kullanımlık Şifre">
 
 	  <input type="submit" class="fadeIn fourth" name="submit" value="Gönder">
-	  <?php 
-	 
- if($_POST){
-	 $mail=($_POST["mail"]);
-	 $sifre=($_POST["kod"]);
-	 if($mail!="" && $sifre!=""){
-		 $sorgu = $baglan->prepare("SELECT kod, MailAdresi, AdSoyad FROM kullanicilar");
-		 $sorgu->execute(array());
-		foreach($sorgu as $item) {
-			if ($sifre == $item['kod'] && $mail == $item['MailAdresi'] ) {
-				
-			
-				$name=$item['AdSoyad'];
-				$_SESSION['oturum']=true;
-				$_SESSION['name']=$name;
-				
-				header('Location:deneme.php ');
-			}
-			else{
-			 ?><div class="alert alert-danger">
-				<strong></strong> KOD YANLIŞ GİRİLDİ!
-				</div>
-				<br><a class="underlineHover" href="register.php">GERİ DÖN</a>
-		 <?}			
-
-		}
-	 }
-	 else{
-		 		?><div class="alert alert-danger">
-				<strong></strong> BOŞ ALAN BIRAKMAYINIZ!
-				</div>
-	 <?}
-	 
- }
-?>
 
 		  
 	
