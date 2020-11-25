@@ -1,5 +1,6 @@
 <?php 
 include("inc/db.php");
+session_start();
 
 if($_GET["islem"]=="sil"){
 if(isset($_GET["id"]))
@@ -198,7 +199,7 @@ include('inc/navbar.php');?>
        </div>
 <?}?>
 
-<? $kullaniciLog->start($_SESSION['name']);?>
+
 <?php include('inc/footer.php') ?>
 
 

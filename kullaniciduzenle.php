@@ -1,7 +1,8 @@
 <?php 
 	include("inc/db.php");
+session_start();
 
-	error_reporting(0);
+	
 if($_GET["islem"]=="sil"){
 if(isset($_GET["id"]))
 {
@@ -35,33 +36,30 @@ date_default_timezone_set('Europe/Istanbul');
 	}
 	 
 }
+
 if($_GET["islem"]=="ekle"){
-	
-
+	 
+	if (isset($_POST["kaydet"])) {
 		
+		$requestUrl = $_SERVER['REQUEST_URI'];
+		$kullanici=$_SESSION['name'];
+		$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
+		$sorgu->execute(array($kullanici, $requestUrl));
+	
 		$AdSoyad = $_POST["AdSoyad"];
-		$Sifre = md5($_POST["Sifre"]);
-	
 		$MailAdresi = $_POST["MailAdresi"];
-
-		if(!empty($AdSoyad)) {
-			$requestUrl = $_SERVER['REQUEST_URI'];
-	$kullanici=$_SESSION['name'];
-	$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
-	$sorgu->execute(array($kullanici, $requestUrl));
+		$Sifre = md5($_POST["Sifre"]);
+     
 		
-			$ekle = $baglan->prepare("
-			insert into kullanicilar set 
-	        AdSoyad= :AdSoyad,
-			MailAdresi= :MailAdresi,
-			Sifre= :Sifre");
+		
+		
+		if(!empty($AdSoyad)){
+		
+
+			$ekle = $baglan->prepare("insert into kullanicilar (AdSoyad,MailAdresi,Sifre) VALUES (?,?,?)");
 		
 		    try {
-		        $result = $ekle->execute(array(
-				 "AdSoyad" => $AdSoyad,
-				 "MailAdresi" => $MailAdresi,
-				 
-				 "Sifre" => $Sifre));
+		        $result = $ekle->execute(array($AdSoyad,$MailAdresi,$Sifre,));
 			
 	 
 				  if($result){ echo "Eklendi." ;
@@ -72,7 +70,7 @@ if($_GET["islem"]=="ekle"){
 		    catch(PDOException $e ) {
 			echo $e->getMessage();
 		                            }
-	}
+	}}
 }
 
 
@@ -164,32 +162,27 @@ include('inc/navbar.php');?>
 <?	} ?>
 
 <?php if($_GET["islem"]=="ekle"){ ?>
-	     <br><div class="container">
+	      <br><div class="container">
 	  <div class="row justify-content-center">
 <form method="post" action="#">
 
       <div class="form-group">
-	     <input type="hidden" class="form-control" id="ID" name="ID" >
-      </div>
-      <div class="form-group">
-	     <label for="Ad"><b>Kullanıcı Adı</label>
-	     <input type="text" class="form-control" id="AdSoyad" name="AdSoyad" >
+	     <label for="AdSoyad"><b>Kullanıcı Adı</label>
+	     <input type="text" class="form-control" id="AdSoyad" name="AdSoyad"  value="">
       </div>
 	    <div class="form-group">
 	     <label for="MailAdresi"><b>Mail Adresi</label>
-	     <input type="text" class="form-control" id="MailAdresi" name="MailAdresi" >
+	     <input type="text" class="form-control" id="MailAdresi" name="MailAdresi"  value="">
       </div>
-	       <div class="form-group">
-	     <label for="Ad"><b>Şifre</label>
-	     <input type="text" class="form-control" id="Sifre" name="Sifre" >
+	     <div class="form-group">
+	     <label for="Sifre"><b>Şifre</label>
+	     <input type="text" class="form-control" id="Sifre" name="Sifre"  value="">
       </div>
-	
 
-     
-	
       <div class="form-group text-center">
            <button type="submit" class="btn btn-dark" name="kaydet" class="form-control">Kaydet</button>
        </div>
+	   
 </form>
  
 	   </div>

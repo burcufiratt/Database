@@ -1,5 +1,6 @@
 <?php 
 include("inc/db.php");
+session_start();
 
 if($_GET["islem"]=="sil"){
 if(isset($_GET["id"]))
