@@ -1,8 +1,7 @@
 
 <?php
 include("inc/db.php");
-unset($_SESSION['token']);
-session_destroy();
+
 session_start();
 if (empty($_SESSION['token'])) {
     $_SESSION['token'] = bin2hex(random_bytes(32));
