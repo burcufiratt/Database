@@ -16,7 +16,7 @@ $result=$sorgu-> fetchAll(PDO::FETCH_OBJ);
 			 
 			 <td><b>KULLANICI</td>
 			  <td><b>HAREKET</td>
-			  <td><b>TARİH/SAAT</td>
+			  <td><b>TARIH/SAAT</td>
 			 
 			
 			 </tr>
@@ -39,5 +39,6 @@ $result=$sorgu-> fetchAll(PDO::FETCH_OBJ);
 </div>
 
  
-<?include('inc/footer.php')?>
+
  </form>
+<?include('inc/footer.php')?>

@@ -10,15 +10,15 @@ include('inc/navbar.php');?>
 	  <div class="row justify-content-center">
 		<div class="col">
 		 <table class="table table-bordered table-striped table-light">
-			<tr colspan = 5 ><b>DOMAİN EXTENSİON</tr>
+			<tr colspan = 5 ><b>DOMAIN EXTENSION</tr>
 			<tr>
 			 <td><b>ID</td>
-			 <td>Kelime</td>
+			 <td>KELIME</td>
 			 <td class="text-right"><b>YÖNET</td>
 			
 			 </tr>
 			 <?php
-			$query = $baglan->prepare("SELECT * FROM domainextension");
+			$query = $baglan->prepare("SELECT * FROM domainextension where Silindi=0");
 
 			 $query->execute();
 			 $result=$query-> fetchAll(PDO::FETCH_OBJ);
@@ -30,7 +30,7 @@ include('inc/navbar.php');?>
 	
 		
 			 	<td class="text-right">
-					<a href="domainextensionduzenle.php?islem=guncelle&id=<?= $row->ID ?> " class="btn btn-warning">Güncelle</a>
+					<a href="domainextensionduzenle.php?islem=guncelle&id=<?= $row->ID ?> " class="btn btn-warning">Guncelle</a>
 					<a href="domainextensionduzenle.php?islem=sil&id=<?= $row->ID ?> " class="btn btn-danger">Sil</a>
 				</td>
 			    </tr>
@@ -39,7 +39,7 @@ include('inc/navbar.php');?>
 
 			</table> 
 			<div class ="text-right">
-			<a href="domainextensionduzenle.php?islem=ekle" class="btn btn-success">Kayıt Ekle</a>		  </div>  
+			<a href="domainextensionduzenle.php?islem=ekle" class="btn btn-success">Kayit Ekle</a>		  </div>  
 	  </div></div>
 	</div>
 

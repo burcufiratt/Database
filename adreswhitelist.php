@@ -9,16 +9,16 @@ include('inc/navbar.php');
 	  <div class="row justify-content-center">
 		<div class="col">
 		 <table class="table table-bordered table-striped table-light">
-			<tr colspan = 5 ><b>ADRES WHİTE LİST</tr>
+			<tr colspan = 5 ><b>ADRES WHITE LIST</tr>
 			<tr>
 			 <td><b>ID</td>
 			 <td>HOST NAME</td>
-			  <td>MAİL ADRESİ</td>
+			  <td>MAIL ADRESI</td>
 			 <td class="text-right"><b>YÖNET</td>
 			
 			 </tr>
 			 <?php
-			$query = $baglan->prepare("SELECT * FROM adreswhitelist");
+			$query = $baglan->prepare("SELECT * FROM adreswhitelist where Silindi=0");
 
 			 $query->execute();
 			 $result=$query-> fetchAll(PDO::FETCH_OBJ);
@@ -31,7 +31,7 @@ include('inc/navbar.php');
 	
 		
 			 	<td class="text-right">
-					<a href="adreswhitelistduzenle.php?islem=guncelle&id=<?= $row->ID ?> " class="btn btn-warning">Güncelle</a>
+					<a href="adreswhitelistduzenle.php?islem=guncelle&id=<?= $row->ID ?> " class="btn btn-warning">Guncelle</a>
 					<a href="adreswhitelistduzenle.php?islem=sil&id=<?= $row->ID ?> " class="btn btn-danger">Sil</a>
 				</td>
 			    </tr>

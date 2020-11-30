@@ -36,7 +36,7 @@ include('inc/navbar.php');
 	
 		
 			 	<td class="text-right">
-					<a href="kullaniciduzenle.php?islem=guncelle&id=<?= $row->ID ?> " class="btn btn-warning">Güncelle</a>
+					<a href="kullaniciduzenle.php?islem=guncelle&id=<?= $row->ID ?> " class="btn btn-warning">Guncelle</a>
 					<a href="kullaniciduzenle.php?islem=sil&id=<?= $row->ID ?> " class="btn btn-danger">Sil</a>
 				</td>
 			    </tr>
@@ -48,7 +48,7 @@ include('inc/navbar.php');
 				
 			</table> 
 			<div class ="text-right">
-			<a href="kullaniciduzenle.php?islem=ekle" class="btn btn-success">Kullanıcı Ekle</a>
+			<a href="kullaniciduzenle.php?islem=ekle" class="btn btn-success">Kullanici Ekle</a>
 		  </div> </div> 
 	  </div>
 	</div>

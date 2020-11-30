@@ -13,14 +13,14 @@ include('inc/navbar.php');?>
 			<tr>
 			 <td><b>ID</td>
 			 <td>KURUM ADI</td>
-			 <td>DOMAİN</td>
+			 <td>DOMAIN</td>
 			 <td>KURUM TÜRÜ</td>
 			 <td class="text-right"><b>YÖNET</td>
 			
 			 </tr>
 			 <?php
 		
-			$query = $baglan->prepare("select * from kurumlar INNER JOIN kurumtürleri ON kurumlar.KTID = kurumtürleri.ID");
+			$query = $baglan->prepare("select * from kurumlar INNER JOIN kurumtürleri ON kurumlar.KTID = kurumtürleri.ID where kurumlar.Silindi=0");
 
 			 $query->execute();
 			 $result=$query-> fetchAll(PDO::FETCH_OBJ);
@@ -34,7 +34,7 @@ include('inc/navbar.php');?>
 				<td><?= $row->Adi ?></td>
 		
 			 		<td class="text-right">
-					<a href="kurumlarduzenle.php?islem=guncelle&id=<?= $row->KID ?> " class="btn btn-warning">Güncelle</a>
+					<a href="kurumlarduzenle.php?islem=guncelle&id=<?= $row->KID ?> " class="btn btn-warning">Guncelle</a>
 					<a href="kurumlarduzenle.php?islem=sil&id=<?= $row->KID ?> " class="btn btn-danger">Sil</a>
 				</td>
 			    </tr>

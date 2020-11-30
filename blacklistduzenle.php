@@ -3,20 +3,26 @@ include("inc/db.php");
 session_start();
 
 if($_GET["islem"]=="sil"){
-if(isset($_GET["id"]))
-{
+		$ID = $_GET["id"];
+
 	$requestUrl = $_SERVER['REQUEST_URI'];
 	$kullanici=$_SESSION['name'];
 	$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
 	$sorgu->execute(array($kullanici, $requestUrl));
-	$sorgu= $baglan->prepare("DELETE FROM blacklist WHERE ID=?");
-	$sonuc=$sorgu->execute([$_GET['id']]);
-	 if($sonuc){
-		header("Location:blacklist.php");
-	 }
-	 else
-		echo("Kayıt silinemedi.");
-}}
+		
+$query = $baglan->prepare("UPDATE blacklist SET
+Silen = :kullanici, Silindi = :Silindi
+WHERE ID = :ID");
+$sil = $query->execute(array(
+     "kullanici" => $kullanici,
+     "Silindi" => "1",
+	 "ID" => $ID 
+));
+if ( $sil ){
+      header('Location:blacklist.php ');
+}
+		   
+	}
 
 if($_GET["islem"]=="guncelle"){
 date_default_timezone_set('Europe/Istanbul');
@@ -44,16 +50,15 @@ if($_GET["islem"]=="ekle"){
 			$HostName = $_POST["HostName"];
 			$IPTuru = $_POST["IPTuru"];
 			$IPAdresi = $_POST["IPAdresi"];
-			$KurumID = $_POST["KurumID"];
-
+		
 		if(!empty($HostName)){
 		
 
 			$ekle = $baglan->prepare("
-			insert into blacklist (HostName,IPTuru,IPAdresi,KurumID,Ekleyen) VALUES (?,?,?,?,?)");
+			insert into blacklist (HostName,IPTuru,IPAdresi,Ekleyen) VALUES (?,?,?,?)");
 		
 		    try {
-		        $result = $ekle->execute(array($HostName,$IPTuru,$IPAdresi,$KurumID,$kullanici));
+		        $result = $ekle->execute(array($HostName,$IPTuru,$IPAdresi,$kullanici));
 				
 			
 	 
@@ -80,7 +85,7 @@ include('inc/navbar.php');?>
 			$HostName = $_POST["HostName"];
 			$IPTuru = $_POST["IPTuru"];
 			$IPAdresi = $_POST["IPAdresi"];
-			$KurumID = $_POST["KurumID"];
+
 
 	$requestUrl = $_SERVER['REQUEST_URI'];
 	$kullanici=$_SESSION['name'];
@@ -92,12 +97,12 @@ include('inc/navbar.php');?>
 		
 
 			$duzenle = $baglan->prepare("
-			update blacklist set HostName =?,IPTuru =?,IPAdresi =?,KurumID =?,
+			update blacklist set HostName =?,IPTuru =?,IPAdresi =?,
 			Duzenleyen =?
 			Where ID = ?");
 		
 		 try {
-			$result = $duzenle->execute(array($HostName, $IPTuru,$IPAdresi,$KurumID,$kullanici,$ID ));
+			$result = $duzenle->execute(array($HostName, $IPTuru,$IPAdresi,$kullanici,$ID ));
 	 
 				if($result){ echo "Güncellendi." ;
 			header('Location:blacklist.php ');  }
@@ -133,10 +138,6 @@ include('inc/navbar.php');?>
 <div class="form-group">
 	<label for="IPAdresi"><b>IP Adresi</label>
 	<input type="text" class="form-control" id="IPAdresi" name="IPAdresi"  value="<?= $row->IPAdresi ?>">
-</div>
-<div class="form-group">
-	<label for="KurumID"><b>Kurum ID</label>
-	<input type="text" class="form-control" id="KurumID" name="KurumID"  value="<?= $row->KurumID ?>">
 </div>
 
 </div>	
@@ -177,11 +178,7 @@ include('inc/navbar.php');?>
 	     <input type="text" class="form-control" id="IPAdresi" name="IPAdresi" >
       </div>
 	  
-	  
-  <div class="form-group">
-	     <label for="KurumID"><b>Kurum ID</label>
-	     <input type="text" class="form-control" id="KurumID" name="KurumID" value="">
-      </div> 	  
+  
 
       <div class="form-group text-center">
         <button type="submit" class="btn btn-dark" name="kaydet" class="form-control">Kaydet</button>

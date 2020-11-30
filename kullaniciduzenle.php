@@ -133,7 +133,7 @@ include('inc/navbar.php');?>
 	<input type="hidden" class="form-control" id="ID" name="ID" value="<?= $row->ID ?>">
 </div>
 <div class="form-group">
-	<label for="Ad"><b>Kullanıcı Adı</label>
+	<label for="Ad"><b>Kullanici Adi</label>
 	<input type="text" class="form-control" id="AdSoyad" name="AdSoyad"  value="<?= $row->AdSoyad ?>">
 </div>
 <div class="form-group">
@@ -167,7 +167,7 @@ include('inc/navbar.php');?>
 <form method="post" action="#">
 
       <div class="form-group">
-	     <label for="AdSoyad"><b>Kullanıcı Adı</label>
+	     <label for="AdSoyad"><b>Kullanici Adi</label>
 	     <input type="text" class="form-control" id="AdSoyad" name="AdSoyad"  value="">
       </div>
 	    <div class="form-group">

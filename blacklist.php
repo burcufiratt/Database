@@ -10,18 +10,17 @@ include('inc/navbar.php');?>
 	  <div class="row justify-content-center">
 		<div class="col">
 		 <table class="table table-bordered table-striped table-light">
-			<tr colspan = 5 ><b>BLACK LİST</tr>
+			<tr colspan = 5 ><b>BLACK LIST</tr>
 			<tr>
 			 <td><b>ID</td>
 			 <td>HOST NAME</td>
 			 <td>IP Türü</td>
 			 <td>IP Adresi</td>
-			 <td>Kurum ID</td>
 			 <td class="text-right"><b>YÖNET</td>
 			
 			 </tr>
 			 <?php
-			$query = $baglan->prepare("SELECT * FROM blacklist");
+			$query = $baglan->prepare("SELECT * FROM blacklist where Silindi=0");
 
 			 $query->execute();
 			 $result=$query-> fetchAll(PDO::FETCH_OBJ);
@@ -32,11 +31,11 @@ include('inc/navbar.php');?>
 			 	<td><?= $row->HostName ?></td>
 				<td><?= $row->IPTuru ?></td>
 				<td><?= $row->IPAdresi ?></td>
-				<td><?= $row->KurumID ?></td>
+
 	
 		
 			 	<td class="text-right">
-					<a href="blacklistduzenle.php?islem=guncelle&id=<?= $row->ID ?> " class="btn btn-warning">Güncelle</a>
+					<a href="blacklistduzenle.php?islem=guncelle&id=<?= $row->ID ?> " class="btn btn-warning">Guncelle</a>
 					<a href="blacklistduzenle.php?islem=sil&id=<?= $row->ID ?> " class="btn btn-danger">Sil</a>
 				</td>
 			    </tr>
@@ -45,7 +44,7 @@ include('inc/navbar.php');?>
 				
 			</table> 
 			<div class ="text-right">
-			<a href="blacklistduzenle.php?islem=ekle" class="btn btn-success">Kayıt Ekle</a>
+			<a href="blacklistduzenle.php?islem=ekle" class="btn btn-success">Kayit Ekle</a>
 		  </div>  </div>
 	  </div>
 	</div>

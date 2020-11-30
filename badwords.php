@@ -18,7 +18,7 @@ include('inc/navbar.php');?>
 			
 			 </tr>
 			 <?php
-			$query = $baglan->prepare("SELECT * FROM badwords");
+			$query = $baglan->prepare("SELECT * FROM badwords where Silindi=0");
 
 			 $query->execute();
 			 $result=$query-> fetchAll(PDO::FETCH_OBJ);
@@ -30,7 +30,7 @@ include('inc/navbar.php');?>
 	
 		
 			 	<td class="text-right">
-					<a href="badwordsduzenle.php?islem=guncelle&id=<?= $row->ID ?> " class="btn btn-warning">Güncelle</a>
+					<a href="badwordsduzenle.php?islem=guncelle&id=<?= $row->ID ?> " class="btn btn-warning">Guncelle</a>
 					<a href="badwordsduzenle.php?islem=sil&id=<?= $row->ID ?> " class="btn btn-danger">Sil</a>
 				</td>
 			    </tr>
@@ -42,7 +42,7 @@ include('inc/navbar.php');?>
 				
 			</table> 
 			<div class ="text-right">
-			<a href="badwordsduzenle.php?islem=ekle" class="btn btn-success">Kayıt Ekle</a>
+			<a href="badwordsduzenle.php?islem=ekle" class="btn btn-success">Kayit Ekle</a>
 		  </div>   </div> 
 	  </div>
 	</div>

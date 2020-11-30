@@ -14,11 +14,12 @@ include('inc/navbar.php');
 			<tr>
 			 <td><b>ID</td>
 			 <td>KURUM TÜRÜ</td>
+			 <td>YER SAGLAYICI</td>
 			 <td class="text-right"><b>YÖNET</td>
 			
 			 </tr>
 			 <?php
-			$query = $baglan->prepare("SELECT * FROM kurumtürleri");
+			$query = $baglan->prepare("SELECT * FROM kurumtürleri where Silindi=0");
 
 			 $query->execute();
 			 $result=$query-> fetchAll(PDO::FETCH_OBJ);
@@ -27,10 +28,10 @@ include('inc/navbar.php');
 			 	<tr>
 			 	<td><?= $row->ID ?></td>
 			 	<td><?= $row->Adi ?></td>
-	
+				<td><?= $row->YerSaglayici ?></td>
 		
 			 		<td class="text-right">
-					<a href="kurumturuduzenle.php?islem=guncelle&id=<?= $row->ID ?> " class="btn btn-warning">Güncelle</a>
+					<a href="kurumturuduzenle.php?islem=guncelle&id=<?= $row->ID ?> " class="btn btn-warning">Guncelle</a>
 					<a href="kurumturuduzenle.php?islem=sil&id=<?= $row->ID ?> " class="btn btn-danger">Sil</a>
 				</td>
 			    </tr>

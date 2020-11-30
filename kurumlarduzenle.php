@@ -4,19 +4,26 @@ session_start();
 
 if($_GET["islem"]=="sil"){
 if(isset($_GET["id"]))
-{
+{		
+	$ID = $_GET["id"];
+
 	$requestUrl = $_SERVER['REQUEST_URI'];
 	$kullanici=$_SESSION['name'];
 	$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
 	$sorgu->execute(array($kullanici, $requestUrl));
-	
-	$sorgu= $baglan->prepare("DELETE FROM kurumlar WHERE KID=?");
-	$sonuc=$sorgu->execute([$_GET['id']]);
-	 if($sonuc){
-		header("Location:kurumlar.php"); 
-	 }
-	 else
-		echo("Kayıt silinemedi.");
+		
+$query = $baglan->prepare("UPDATE kurumlar SET
+Silen = :kullanici, Silindi = :Silindi
+WHERE KID = :KID");
+$sil = $query->execute(array(
+     "kullanici" => $kullanici,
+     "Silindi" => "1",
+	 "KID" => $ID 
+));
+if ( $sil ){
+      header('Location:kurumlar.php ');
+}
+		   
 }}
 
 if($_GET["islem"]=="guncelle"){
@@ -119,7 +126,7 @@ include('inc/navbar.php');?>
 <form method="post" action="?id=<?php echo $id;?>">
 <?php foreach($result as $row){ ?>
 <div class="form-group">
-	<label for="KurumAdi"><b>Kurum Adı</label>
+	<label for="KurumAdi"><b>Kurum Adi</label>
 		<input type="hidden" name="id" value="<?php echo $id;?>">
 	<input type="text" class="form-control" id="KurumAdi" name="KurumAdi" placeholder="örn. sabahweb" value="<?= $row->KurumAdi ?>">
 </div>
@@ -164,7 +171,7 @@ include('inc/navbar.php');?>
 <form method="post" action="#">
 
       <div class="form-group">
-	     <label for="KurumAdi"><b>Kurum Adı</label>
+	     <label for="KurumAdi"><b>Kurum Adi</label>
 	     <input type="text" class="form-control" id="KurumAdi" name="KurumAdi"  value="">
       </div>
       <div class="form-group">

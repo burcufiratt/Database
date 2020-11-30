@@ -3,21 +3,26 @@ include('inc/db.php');
 session_start();
 	
 if($_GET["islem"]=="sil"){
-	if(isset($_GET["id"]))
-	{
-			$requestUrl = $_SERVER['REQUEST_URI'];
-			$kullanici=$_SESSION['name'];
-			$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
-			$sorgu->execute(array($kullanici, $requestUrl));
-	
-		$sorgu= $baglan->prepare("DELETE FROM adresblacklist WHERE ID=?");
-		$sonuc=$sorgu->execute([$_GET['id']]);
-		if($sonuc){
-			header("Location:adresblacklist.php"); 
-				  }
-		else
-			echo("Kayıt silinemedi.");
-	}}
+		$ID = $_GET["id"];
+
+	$requestUrl = $_SERVER['REQUEST_URI'];
+	$kullanici=$_SESSION['name'];
+	$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
+	$sorgu->execute(array($kullanici, $requestUrl));
+		
+$query = $baglan->prepare("UPDATE adresblacklist SET
+Silen = :kullanici, Silindi = :Silindi
+WHERE ID = :ID");
+$sil = $query->execute(array(
+     "kullanici" => $kullanici,
+     "Silindi" => "1",
+	 "ID" => $ID 
+));
+if ( $sil ){
+      header('Location:adresblacklist.php ');
+}
+		   
+	}
 
 if($_GET["islem"]=="guncelle"){
 date_default_timezone_set('Europe/Istanbul');

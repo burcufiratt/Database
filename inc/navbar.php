@@ -21,7 +21,6 @@
 		  <a class="dropdown-item" href="blacklist.php">Black List</a>
 		  <a class="dropdown-item" href="badwords.php">Bad Words</a>
 		  <a class="dropdown-item" href="domainextension.php">Domain Extension</a>
-		  <a class="dropdown-item" href="yersaglayici.php">Yer Sağlayıcılar</a>
 		  <a class="dropdown-item" href="kullanici.php">Kullanıcılar</a>
        
           <div class="dropdown-divider"></div>

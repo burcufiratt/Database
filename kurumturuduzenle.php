@@ -1,25 +1,50 @@
 <?php 
 include("inc/db.php");
 session_start();
+
 if($_GET["islem"]=="sil"){
-if(isset($_GET["id"]))
-{
-	
+
+		$ID = $_GET["id"];
+
 	$requestUrl = $_SERVER['REQUEST_URI'];
 	$kullanici=$_SESSION['name'];
 	$sorgu = $baglan->prepare("INSERT INTO log (kullanici,tablo) VALUES (?,?)");
 	$sorgu->execute(array($kullanici, $requestUrl));
-	
-	$sorgu= $baglan->prepare("DELETE FROM kurumtürleri WHERE ID=?");
-	$sonuc=$sorgu->execute([$_GET['id']]);
-	 if($sonuc){
-		header("Location:kurumturu.php");
-	 }
-	 else
-		echo("Kayıt silinemedi.");
-}}
+		
+$query = $baglan->prepare("UPDATE kurumtürleri SET
+Silen = :kullanici, Silindi = :Silindi
+WHERE ID = :ID");
+$sil = $query->execute(array(
+     "kullanici" => $kullanici,
+     "Silindi" => "1",
+	 "ID" => $ID 
+));
+if ( $sil ){
+      header('Location:kurumturu.php ');
+}
+		   
+		
+		
+}
 
 if($_GET["islem"]=="guncelle"){
+date_default_timezone_set('Europe/Istanbul');
+
+	$id = $_GET['id'];
+	if(isset($id)){
+	 
+	 $query = $baglan->prepare("SELECT * FROM kurumtürleri WHERE ID = $id");
+
+     $query->execute();
+     $result=$query-> fetchAll(PDO::FETCH_OBJ);
+
+
+    } else {
+		 header("Refresh: 3; url=index.php"); 
+	}
+	 
+}
+if($_GET["islem"]=="sil"){
 date_default_timezone_set('Europe/Istanbul');
 
 	$id = $_GET['id'];
@@ -47,18 +72,18 @@ if($_GET["islem"]=="ekle"){
 	$sorgu->execute(array($kullanici, $requestUrl));
 		
 	$Adi = $_POST["Adi"];
-
+	$YerSaglayici = $_POST["YerSaglayici"];
 
 
 		if(!empty($Adi)){
 		
 
 			$ekle = $baglan->prepare("
-			insert into kurumtürleri (Adi, Ekleyen) VALUES (?,?)");
+			insert into kurumtürleri (Adi,YerSaglayici,Ekleyen) VALUES (?,?,?)");
 	  
 		
 		    try {
-		        $result = $ekle->execute(array($Adi,$kullanici));
+		        $result = $ekle->execute(array($Adi,$kullanici,$YerSaglayici));
 				
 			
 	 
@@ -81,6 +106,7 @@ if (isset($_POST["id"])) {
 		$Form_id = $_POST["id"];
 		$ID = $_POST["ID"];
 		$Adi = $_POST["Adi"];
+		$YerSaglayici = $_POST["YerSaglayici"];
 		
 		
 	
@@ -94,11 +120,11 @@ if (isset($_POST["id"])) {
 		
 
 			$duzenle = $baglan->prepare("
-			update kurumtürleri set  Adi=?, Duzenleyen =? where ID =?");
+			update kurumtürleri set  Adi=?, YerSaglayici=?, Duzenleyen =? where ID =?");
 
 		
 		 try {
-			$result = $duzenle->execute(array( $Adi,$kullanici,$ID ));
+			$result = $duzenle->execute(array( $Adi,$YerSaglayici,$kullanici,$ID ));
 	
 			
 	 
@@ -126,7 +152,10 @@ if (isset($_POST["id"])) {
 	<label for="KurumAdi"><b>Kurum Türü</label>
 	<input type="text" class="form-control" id="Adi" name="Adi"  value="<?= $row->Adi ?>">
 </div>
-
+<div class="form-group">
+	<label for="YerSaglayici"><b>Yer Saglayici</label>
+	<input type="text" class="form-control" id="YerSaglayici" name="YerSaglayici"  value="<?= $row->YerSaglayici ?>">
+</div>
 
 
 <div class="form-group text-center">
@@ -148,6 +177,10 @@ if (isset($_POST["id"])) {
 	     <label for="KurumAdi"><b>Kurum Türü</label>
 	     <input type="text" class="form-control" id="Adi" name="Adi" placeholder="örn. Devlet Kurumları" value="">
       </div>
+	    <div class="form-group">
+	     <label for="YerSaglayici"><b>Yer Saglayici</label>
+	     <input type="text" class="form-control" id="YerSaglayici" name="YerSaglayici" placeholder="" value="">
+      </div>
       <div class="form-group">
 	   
 	     <input type="hidden" class="form-control" id="ID" name="ID" placeholder="örn. 1" value="">
@@ -161,6 +194,8 @@ if (isset($_POST["id"])) {
 	   </div>
        </div>
 <?}?>
+
+
 
 
 <?php include('inc/footer.php') ?>
